@@ -2,9 +2,9 @@
 #include <math.h>
 #include <iostream>
 
-using namespace std;
-// fungsi brensenham
-float bresenham(float  dx, float dy){
+float dx, dy, pk, step;
+
+float steps(float  dx, float dy){
 	float abs_dx = abs(dx);
 	float abs_dy = abs(dy);
 	
@@ -39,25 +39,36 @@ void garis()
 	
 	glColor3ub(255, 0, 0); 
 	
-	int x0 = 12, y0 = 1, x1 = 2, y1 = 8;
+	int x0 = 2, y0 = 9, x1 = 7, y1 = 2;
 	
+	// titik awal
 	glVertex2f(x0*100, y0*100); 
-	// step 1
-	float dx = x1 - x0;
-	float dy = y1 - y0;
 	
-	// gradien
-	float m = dy/dx;
+	// step 1
+	dx = x1 - x0;
+	dy = y1 - y0;
 	
 	// step 2
-	float steps = bresenham(dx, dy);
+	pk = (2*dy)-dx;
 	
-	for (int i = 0; i < steps; i++){
-		x0 = round(x0 - 1);
-		y0 = round(y0 - m);
-		
+	// decide steps
+	step = steps(dx, dy);
+	
+	
+	for (int i = 0; i < step+1; i++){
+		if (pk < 0){
+			pk = pk + abs(2*dy);
+			x0 = x0;
+			y0 = y0 -1;
+		} 
+		else if (pk >= 0){
+			pk = pk + abs(2*dy)-abs(2*dx);
+			x0 = x0+1;
+			y0 = y0-1;
+		}
 	}
 	
+	// titik akhir
 	glVertex2f(x0*100, y0*100);
 	
 	glPointSize(50.0f); 
