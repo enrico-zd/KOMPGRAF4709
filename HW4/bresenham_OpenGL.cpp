@@ -1,77 +1,84 @@
 #include<GL/glut.h>
-#include <math.h>
-#include <iostream>
+#include<stdlib.h>
+#include<stdio.h>
 
-float dx, dy, pk, step;
 
-float steps(float  dx, float dy){
-	float abs_dx = abs(dx);
-	float abs_dy = abs(dy);
-	
-	if (abs_dx >= abs_dy){
-		return abs_dx;
+ 
+void display(void)
+{
+float x0=1,xn=7,y0=2,yn=2;	
+
+float dy,dx,x,y,p,duady,duadydx,xend;
+
+// mencari dx dan dy
+dx=abs(xn-x0);
+dy=abs(yn-y0);
+
+// hitung p
+p = 2 * dx - dy;
+duady = 2 * dy;
+duadydx = 2 * (dy - dx);
+
+// tentukan titik awal dan titik akhir
+if (x0 > xn){
+	x = xn;
+	y = yn;
+	xend = x0;
+} else{
+	x = x0;
+	y = y0;
+	xend = xn;
+}
+
+// gambar titik awal
+glPointSize(5);
+glBegin(GL_POINTS);
+glVertex2i(x,y);
+
+// perulangan untuk menggambar titik-titik
+while (x < xend){
+	x++;
+	if (p < 0){
+		p += duady;
 	} else{
-		return abs_dy;
-	}
-}
-
-void garis();
-main (int argc, char** argv)
-{ 
-	glutInit(&argc,argv); 
-	glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB); 
-	glutInitWindowSize(1200.0,720.0); 
-	glutInitWindowPosition(0,0); 
-	glutCreateWindow("Project Membuat Garis"); 
-	glClearColor(0.0, 0.0, 0.0, 0.0); 
-	glMatrixMode(GL_PROJECTION); 
-	glOrtho(0.0f, 1200.0f, 720.0f, 0.0f, 0.0f, 1.0f); 
-	glutDisplayFunc(garis); 
-	glutMainLoop();
-	
-	
-}
-
-void garis()
-{ 
-	glClear(GL_COLOR_BUFFER_BIT); 
-	glBegin(GL_LINES); 
-	
-	glColor3ub(255, 0, 0); 
-	
-	int x0 = 2, y0 = 9, x1 = 7, y1 = 2;
-	
-	// titik awal
-	glVertex2f(x0*100, y0*100); 
-	
-	// step 1
-	dx = x1 - x0;
-	dy = y1 - y0;
-	
-	// step 2
-	pk = (2*dy)-dx;
-	
-	// decide steps
-	step = steps(dx, dy);
-	
-	
-	for (int i = 0; i < step+1; i++){
-		if (pk < 0){
-			pk = pk + abs(2*dy);
-			x0 = x0;
-			y0 = y0 -1;
-		} 
-		else if (pk >= 0){
-			pk = pk + abs(2*dy)-abs(2*dx);
-			x0 = x0+1;
-			y0 = y0-1;
+		if (y0 > yn){
+			y--;
+		} else if (y0 == yn){
+			y=y;
+		}else{
+			y++;
 		}
+		p += duadydx;
 	}
-	
-	// titik akhir
-	glVertex2f(x0*100, y0*100);
-	
-	glPointSize(50.0f); 
-	glEnd(); 
-	glFlush();
+	glBegin(GL_POINTS);
+	glVertex2i(x,y);
+	glEnd();
 }
+ 
+ 
+glFlush();
+}
+ 
+void init(void)
+{
+glClearColor(0.7,0.7,0.7,0.7);
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+gluOrtho2D(-5,30,-5,30);
+}
+ 
+int main(int argc, char** argv) {
+ 
+glutInit(&argc, argv);
+glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+glutInitWindowSize (500, 500);
+glutInitWindowPosition (100,100);
+glutCreateWindow ("Bresenham Line Algo");
+init();
+glutDisplayFunc(display);
+glutMainLoop();
+ 
+return 0;
+}
+
+

@@ -1,66 +1,73 @@
 #include<GL/glut.h>
-#include <math.h>
-#include <iostream>
+#include<stdlib.h>
+#include<stdio.h>
 
-using namespace std;
-// fungsi brensenham
-float bresenham(float  dx, float dy){
-	float abs_dx = abs(dx);
-	float abs_dy = abs(dy);
+ 
+void display(void)
+{
+	float x1 = 1,x2 = 7,y1 = 2,y2 = 2;	
+
+	float dy,dx,step,x,y,k,Xin,Yin;
 	
-	if (abs_dx >= abs_dy){
-		return abs_dx;
-	} else{
-		return abs_dy;
+	x = x1;
+	y = y1;
+	
+	// mencari dx dan dy
+	dx=x2-x1;
+	dy=y2-y1;
+
+	// steps 
+	if(abs(dx)> abs(dy))
+	{
+		step = abs(dx);	
 	}
-}
-
-void garis();
-main (int argc, char** argv)
-{ 
-	glutInit(&argc,argv); 
-	glutInitDisplayMode(GLUT_SINGLE|GLUT_RGB); 
-	glutInitWindowSize(1200.0,720.0); 
-	glutInitWindowPosition(0,0); 
-	glutCreateWindow("Project Membuat Garis"); 
-	glClearColor(0.0, 0.0, 0.0, 0.0); 
-	glMatrixMode(GL_PROJECTION); 
-	glOrtho(0.0f, 1200.0f, 720.0f, 0.0f, 0.0f, 1.0f); 
-	glutDisplayFunc(garis); 
-	glutMainLoop();
-	
-	
-}
-
-void garis()
-{ 
-	glClear(GL_COLOR_BUFFER_BIT); 
-	glBegin(GL_LINES); 
-	
-	glColor3ub(255, 0, 0); 
-	
-	int x0 = 12, y0 = 1, x1 = 2, y1 = 8;
-	
-	glVertex2f(x0*100, y0*100); 
-	// step 1
-	float dx = x1 - x0;
-	float dy = y1 - y0;
-	
-	// gradien
-	float m = dy/dx;
-	
-	// step 2
-	float steps = bresenham(dx, dy);
-	
-	for (int i = 0; i < steps; i++){
-		x0 = round(x0 - 1);
-		y0 = round(y0 - m);
+	else
+		step = abs(dy);
+	 	
+	 	// mencari nilai increment
+		Xin = dx/step;
+		Yin = dy/step;
 		
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		
+		glVertex2i(x,y);
+		glEnd();
+	 
+	for (k=1 ;k<=step;k++)
+	{
+		x= x + Xin;
+		y= y + Yin;
+		 
+		glBegin(GL_POINTS);
+		glVertex2i(x,y);
+		glEnd();
 	}
-	
-	glVertex2f(x0*100, y0*100);
-	
-	glPointSize(50.0f); 
-	glEnd(); 
+	 
+	 
 	glFlush();
 }
+ 
+void init(void)
+{
+	glClearColor(0.7,0.7,0.7,0.7);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(-5,30,-5,30);
+}
+ 
+int main(int argc, char** argv) {
+ 
+	glutInit(&argc, argv);
+	glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+	glutInitWindowSize (500, 500);
+	glutInitWindowPosition (100,100);
+	glutCreateWindow ("DDA Line Algo");
+	init();
+	glutDisplayFunc(display);
+	glutMainLoop();
+	 
+	return 0;
+}
+
+
